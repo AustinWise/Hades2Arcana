@@ -8,7 +8,8 @@ record class Card(string Name, int Cost, bool ThePrefix)
     public static readonly Card[][] s_cardGrid;
     public static readonly Context s_context = new Context();
     private static readonly Dictionary<string, Card> s_allCards = new();
-    private static readonly Dictionary<string, BoolExpr> s_cardEnableConstraints = new();
+    private static readonly Dictionary<string, BoolExpr> s_cardWantConstraints = new();
+    private static readonly Dictionary<string, BoolExpr> s_cardDontWantConstraints = new();
     private static readonly List<BoolExpr> s_awakeningConstraints = new();
     private static readonly ArithExpr s_graspUsed;
 
@@ -48,7 +49,8 @@ record class Card(string Name, int Cost, bool ThePrefix)
 
         foreach (var c in s_allCards.Values)
         {
-            s_cardEnableConstraints.Add(c.Name, s_context.MkEq(c.CardExpr, s_context.MkTrue()));
+            s_cardWantConstraints.Add(c.Name, s_context.MkEq(c.CardExpr, s_context.MkTrue()));
+            s_cardDontWantConstraints.Add(c.Name, s_context.MkEq(c.CardExpr, s_context.MkFalse()));
             var awakening = c.GetAwakeningConstraing(s_allCards, s_cardGrid);
             if (awakening is not null)
             {
@@ -70,11 +72,11 @@ record class Card(string Name, int Cost, bool ThePrefix)
         constraints.AddRange(s_awakeningConstraints);
         foreach (var c in wantCards)
         {
-            constraints.Add(s_cardEnableConstraints[c.Name]);
+            constraints.Add(s_cardWantConstraints[c.Name]);
         }
         foreach (var c in dontWantCards)
         {
-            constraints.Add(s_context.MkNot(s_cardEnableConstraints[c.Name]));
+            constraints.Add(s_cardDontWantConstraints[c.Name]);
         }
 
         using var solver = s_context.MkSolver();
