@@ -29,7 +29,7 @@ public partial class CtrlCardGrid : UserControl
                     AutoSize = true,
                     ThreeState = true,
                 };
-                chk.CheckedChanged += checkHandler;
+                chk.CheckStateChanged += checkHandler;
                 table.Controls.Add(chk, colNdx, rowNdx);
                 _checkboxes.Add(chk);
                 _checkboxMap.Add(c.Name, chk);
