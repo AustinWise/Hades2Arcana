@@ -66,7 +66,7 @@ partial class FrmMain
         groupCards.Location = new Point(12, 41);
         groupCards.Name = "groupCards";
         groupCards.Size = new Size(660, 608);
-        groupCards.TabIndex = 2;
+        groupCards.TabIndex = 5;
         groupCards.TabStop = false;
         groupCards.Text = "Cards";
         // 
@@ -85,7 +85,7 @@ partial class FrmMain
         btnShowSolution.Location = new Point(539, 12);
         btnShowSolution.Name = "btnShowSolution";
         btnShowSolution.Size = new Size(133, 23);
-        btnShowSolution.TabIndex = 3;
+        btnShowSolution.TabIndex = 4;
         btnShowSolution.Text = "&Show Solution";
         btnShowSolution.UseVisualStyleBackColor = true;
         btnShowSolution.Click += btnShowSolution_Click;
@@ -96,10 +96,10 @@ partial class FrmMain
         chkValidSolutionExists.Checked = true;
         chkValidSolutionExists.CheckState = CheckState.Checked;
         chkValidSolutionExists.Enabled = false;
-        chkValidSolutionExists.Location = new Point(404, 15);
+        chkValidSolutionExists.Location = new Point(389, 15);
         chkValidSolutionExists.Name = "chkValidSolutionExists";
         chkValidSolutionExists.Size = new Size(129, 19);
-        chkValidSolutionExists.TabIndex = 4;
+        chkValidSolutionExists.TabIndex = 3;
         chkValidSolutionExists.Text = "Valid Solution Exists";
         chkValidSolutionExists.UseVisualStyleBackColor = true;
         // 
@@ -107,10 +107,10 @@ partial class FrmMain
         // 
         lblGraspUsed.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         lblGraspUsed.AutoSize = true;
-        lblGraspUsed.Location = new Point(291, 16);
+        lblGraspUsed.Location = new Point(280, 16);
         lblGraspUsed.Name = "lblGraspUsed";
         lblGraspUsed.Size = new Size(78, 15);
-        lblGraspUsed.TabIndex = 5;
+        lblGraspUsed.TabIndex = 2;
         lblGraspUsed.Text = "Grasp Used: 0";
         // 
         // FrmMain
