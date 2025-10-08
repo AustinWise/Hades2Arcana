@@ -1,0 +1,113 @@
+name: release
+env:
+  PROJECT_FILE_TO_RELEASE: Hades2Arcana/Hades2Arcana.csproj
+  ASSEMBLY_NAME: Hades2Arcana
+on:
+  push:
+    # Enable when testing release infrastructure on a branch.
+    branches:
+    - ci_testing
+    tags:
+      # Despite their appearance, these are NOT regular expressions =(
+      # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-*" # prerelease
+
+jobs:
+
+  build-release:
+    runs-on: ${{ matrix.image }}
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            os: win
+            image: windows-2025
+
+    steps:
+
+      - name: Set VERSION variable from tag
+        if: github.ref_type == 'tag'
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+
+      - name: Set VERSION variable from branch
+        if: github.ref_type != 'tag'
+        shell: bash
+        run: echo "VERSION=0.0.1-citesting" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          # This is needed for Nerdbank.GitVersioning.
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+            dotnet-version: '10.0.x'
+            dotnet-quality: 'preview'
+
+      - name: Build
+        shell: bash
+        run: dotnet publish "${{ env.PROJECT_FILE_TO_RELEASE }}" -c Release -r ${{ matrix.os }}-${{ matrix.arch }} -o publish -p:Version=$VERSION
+
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: program-${{ matrix.os }}-${{ matrix.arch }}
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            publish/${{ env.ASSEMBLY_NAME }}
+            publish/${{ env.ASSEMBLY_NAME }}.exe
+            publish/*.dll
+            publish/*.dylib
+            publish/*.so
+
+      - name: Upload Symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: symbols-${{ matrix.os }}-${{ matrix.arch }}
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            publish/*.pdb
+            publish/*.dbg
+            publish/*.dsym
+
+  create-release:
+    needs: ["build-release"]
+    runs-on: ubuntu-24.04
+    env:
+      SYMBOL_TARBALL: symbols.tar.gz
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          # This is needed to get all tags for the `gh release create` command.
+          fetch-depth: 0
+      - name: Create temp directory
+        run: |
+          echo "ARTIFACT_TEMP_DIRECTORY=$(mktemp -d -p ${{ runner.temp }})" >> "$GITHUB_ENV"
+      - name: Download built programs and symbols
+        uses: actions/download-artifact@v5
+        with:
+          path: ${{ env.ARTIFACT_TEMP_DIRECTORY }}
+      - name: Create tarballs
+        run: ./.github/workflows/create-release.sh "${{ env.ASSEMBLY_NAME }}" "${{ env.ARTIFACT_TEMP_DIRECTORY }}"
+      - name: Upload tarballs
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts
+          retention-days: 7
+          compression-level: 0
+          path: |
+            ${{ env.ARTIFACT_TEMP_DIRECTORY }}/*.tar.gz
+            ${{ env.ARTIFACT_TEMP_DIRECTORY }}/*.zip
+      - name: Create release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create ${{ github.ref_name }} --notes-from-tag --verify-tag ${{ contains(github.ref_name, '-') && '--prerelease' || '' }} ${{ env.ARTIFACT_TEMP_DIRECTORY }}/*.tar.gz ${{ env.ARTIFACT_TEMP_DIRECTORY }}/*.zip

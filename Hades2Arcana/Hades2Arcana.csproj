@@ -7,6 +7,8 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
+		<PublishAot>true</PublishAot>
+		<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
 	</PropertyGroup>
 
 	<ItemGroup>
