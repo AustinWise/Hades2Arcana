@@ -17,7 +17,7 @@ record class Card(string Name, int Cost, bool ThePrefix)
     {
         s_cardGrid =
         [
-            [new Card("Sorceress", 1, true), new Card("Warway Sun", 1, true), new Card("Huntress", 2, true), new Card("Eternity", 3, false), new MoonCard()],
+            [new Card("Sorceress", 1, true), new Card("Wayward Son", 1, true), new Card("Huntress", 2, true), new Card("Eternity", 3, false), new MoonCard()],
             [new Card("Furies", 2, true), new Card("Persistence", 2, false), new Card("Messenger", 1, true), new Card("Unseen", 5, true), new Card("Night", 2, false)],
             [new Card("Swift Runner", 1, true), new Card("Death", 4, false), new CentaurCard(), new Card("Origination", 5, false), new Card("Lovers", 3, true)],
             [new Card("Enchantress", 3, true), new Card("Boatman", 5, true), new Card("Artificer", 3, true), new Card("Excellence", 5, false), new QueenCard()],
