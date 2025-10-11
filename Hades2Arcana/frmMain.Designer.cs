@@ -56,7 +56,7 @@ partial class FrmMain
         graspUpDown.Name = "graspUpDown";
         graspUpDown.Size = new Size(82, 23);
         graspUpDown.TabIndex = 1;
-        graspUpDown.Value = new decimal(new int[] { 29, 0, 0, 0 });
+        graspUpDown.Value = new decimal(new int[] { 30, 0, 0, 0 });
         graspUpDown.ValueChanged += graspUpDown_ValueChanged;
         // 
         // groupCards

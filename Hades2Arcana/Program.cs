@@ -13,6 +13,7 @@ static class Program
         try
         {
             ApplicationConfiguration.Initialize();
+            Application.SetColorMode(SystemColorMode.System);
             Application.Run(new FrmMain());
         }
         catch (Exception ex)
