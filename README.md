@@ -11,5 +11,9 @@ can be in one of three states:
 * checked - you want this card to be used
 * dashed - you DON'T want this card to be used
 
-each time you check a card, the display is updated to display whether or not a possible solution
+Each time you check a card, the display is updated to display whether or not a possible solution
 exists. Clicking "show solution" will show what combination of cards will satisfy your requirements.
+
+## Screenshot
+
+![Screenshot](docs/screenshot.png)
