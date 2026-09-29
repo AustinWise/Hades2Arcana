@@ -1,3 +1,5 @@
+# This workflow is managed by gh actions-lock.
+
 name: release
 env:
   PROJECT_FILE_TO_RELEASE: Hades2Arcana/Hades2Arcana.csproj
@@ -37,13 +39,13 @@ jobs:
         run: echo "VERSION=0.0.1-citesting" >> $GITHUB_ENV
 
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v5.1.0
         with:
           # This is needed for Nerdbank.GitVersioning.
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v5.4.0
         with:
             dotnet-version: '10.0.x'
             dotnet-quality: 'preview'
@@ -53,7 +55,7 @@ jobs:
         run: dotnet publish "${{ env.PROJECT_FILE_TO_RELEASE }}" -c Release -r ${{ matrix.os }}-${{ matrix.arch }} -o publish -p:Version=$VERSION
 
       - name: Upload Output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: program-${{ matrix.os }}-${{ matrix.arch }}
           retention-days: 7
@@ -66,7 +68,7 @@ jobs:
             publish/*.so
 
       - name: Upload Symbols
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: symbols-${{ matrix.os }}-${{ matrix.arch }}
           retention-days: 7
@@ -85,7 +87,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v5.1.0
         with:
           # This is needed to get all tags for the `gh release create` command.
           fetch-depth: 0
@@ -93,14 +95,14 @@ jobs:
         run: |
           echo "ARTIFACT_TEMP_DIRECTORY=$(mktemp -d -p ${{ runner.temp }})" >> "$GITHUB_ENV"
       - name: Download built programs and symbols
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v5.0.0
         with:
           path: ${{ env.ARTIFACT_TEMP_DIRECTORY }}
       - name: Create tarballs
         run: ./.github/workflows/create-release.sh "${{ env.ASSEMBLY_NAME }}" "${{ env.ARTIFACT_TEMP_DIRECTORY }}"
       - name: Upload tarballs
         if: github.ref_type != 'tag'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: artifacts
           retention-days: 7
